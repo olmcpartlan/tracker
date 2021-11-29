@@ -28,6 +28,8 @@ public class FoodController {
 
         String url = String.format("https://api.edamam.com/api/food-database/v2/parser?app_id=%s&app_key=%s&ingr=%s", appId, creds, searchCriteria);
 
+        System.out.println(url);
+
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         ObjectMapper mapper = new ObjectMapper();

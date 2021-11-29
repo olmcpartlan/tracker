@@ -72,7 +72,12 @@ class Food {
     private String image;
     private String brand;
     private String foodContentsLabel;
-    private ServingSize servingSizes;
+    private ServingSize[] servingSizes;
+    private double servingsPerContainer;
+
+    public double getServingsPerContainer() {
+        return servingsPerContainer;
+    }
 
     public String getBrand() {
         return brand;
@@ -82,7 +87,7 @@ class Food {
         return foodContentsLabel;
     }
 
-    public ServingSize getServingSize() {
+    public ServingSize[] getServingSizes() {
         return servingSizes;
     }
 
@@ -111,8 +116,12 @@ class Food {
     }
 
     @JsonProperty("servingSizes")
-    public void setServingSize(ServingSize servingSizes) {
+    public void setServingSizes(ServingSize[] servingSizes) {
         this.servingSizes = servingSizes;
+    }
+
+    public void setServingsPerContainer(double servingsPerContainer) {
+        this.servingsPerContainer = servingsPerContainer;
     }
 
     public void setNutrients(Nutrients nutrients) {
@@ -150,7 +159,33 @@ class Food {
 }
 
 class ServingSize {
+    private String uri;
+    private String label;
+    private double quantity;
 
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 }
 
 class Nutrients {
