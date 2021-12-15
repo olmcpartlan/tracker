@@ -1,7 +1,11 @@
 package org.eoghancorp.tracker.Models;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -11,6 +15,29 @@ public class FoodResponse {
     private Parsed[] parsed;
     private Hint[] hints;
     private Link links;
+
+    public void LoopHints(FoodResponse res) {
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+
+            for(Hint hint : res.hints) {
+                Nutrients nuuts = hint.getFood().getNutrients();
+                String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(nuuts);
+                System.out.println(json);
+                if(nuuts.getSUGAR() != null) {
+                }
+
+            }
+
+
+        }
+        catch(JsonProcessingException e) {
+            System.out.println(e.getMessage());
+        }
+
+
+    }
 
     public Parsed[] getParsed() {
         return parsed;
@@ -188,54 +215,67 @@ class ServingSize {
     }
 }
 
+@Getter
+@Setter
 class Nutrients {
 
-    private double ENERC_KCAL;
-    private double PROCNT;
-    private double FAT;
-    private double CHOCDF;
-    private double FIBTG;
-
-    public double getCHOCDF() {
-        return CHOCDF;
-    }
-
-    public double getENERC_KCAL() { return ENERC_KCAL; }
-
-    public double getFAT() {
-        return FAT;
-    }
-
-    public double getFIBTG() {
-        return FIBTG;
-    }
-
-    public double getPROCNT() {
-        return PROCNT;
-    }
-
-    @JsonProperty("CHOCDF")
-    public void setCHOCDF(double CHOCDF) {
-        this.CHOCDF = CHOCDF;
-    }
-
+    @JsonProperty("CA")
+    private String CA;         // Calcium (mg)
     @JsonProperty("ENERC_KCAL")
-    public void setENERC_KCAL(double ENERC_KCAL) { this.ENERC_KCAL = ENERC_KCAL; }
-
-    @JsonProperty("FAT")
-    public void setFAT(double FAT) {
-        this.FAT = FAT;
-    }
-
-    @JsonProperty("FIBTG")
-    public void setFIBTG(double FIBTG) {
-        this.FIBTG = FIBTG;
-    }
-
+    private String ENERC_KCAL; // Energy (kcal)
     @JsonProperty("PROCNT")
-    public void setPROCNT(double PROCNT) {
-        this.PROCNT = PROCNT;
-    }
+    private String PROCNT;     // Protein (g)
+    @JsonProperty("FAT")
+    private String FAT;        // Fat (g)
+    @JsonProperty("FAMS")
+    private String FAMS;       // Monounsaturated Fatty Acids (g)
+    @JsonProperty("FAPU")
+    private String FAPU;       // Polyunsaturated Fatty Acids (g)
+    @JsonProperty("CHOCDF")
+    private String CHOCDF;     // Carbohydrates (g)
+    @JsonProperty("CHOLE")
+    private String CHOLE;      // Cholesterol (mg)
+    @JsonProperty("FIBTG")
+    private String FIBTG;      // Fiber (g)
+    @JsonProperty("FASAT")
+    private String FASAT;      // Saturated Fatty Acids (g)
+    @JsonProperty("FATRN")
+    private String FATRN;      // Total fatty acids (g)
+    @JsonProperty("FE")
+    private String FE;         // Iron (mg)
+    @JsonProperty("FOLDFE")
+    private String FOLDFE;     // Folate (µg)
+    @JsonProperty("K")
+    private String K;          // Potassium (mg)
+    @JsonProperty("MG")
+    private String MG;         // Magnesium (mg)
+    @JsonProperty("NA")
+    private String NA;         // Sodium (mg)
+    @JsonProperty("P")
+    private String P;          // Phosphorus (mg)
+    @JsonProperty("RIBF")
+    private String RIBF;       // Riboflavin (mg)
+    @JsonProperty("SUGAR")
+    private String SUGAR;      // Sugar (g)
+    @JsonProperty("THIA")
+    private String THIA;       // Thiamin (g)
+    @JsonProperty("TOCPA")
+    private String TOCPA;      // Vitamin E (mg)
+    @JsonProperty("VATA_RAE")
+    private String VATA_RAE;   // Vitamin A (µg)
+    @JsonProperty("VITB12")
+    private String VITB12;     // Vitamin B12 (µg)
+    @JsonProperty("VITB6A")
+    private String VITB6A;     // Vitamin B-6 (mg)
+    @JsonProperty("VITC")
+    private String VITC;       // Vitamin C (mg)
+    @JsonProperty("VITD")
+    private String VITD;       // Vitamin D (mg)
+    @JsonProperty("VITK1")
+    private String VITK1;      // Vitamin K (µg)
+    @JsonProperty("ZN")
+    private String ZN;          // Zinc (mg)
+
 }
 
 class Hint {

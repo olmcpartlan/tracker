@@ -9,8 +9,11 @@ import {
   TextInput,
   Form,
   FormField,
+  Paragraph,
+  InfiniteScroll,
 } from "grommet";
 import { render } from "@testing-library/react";
+import FoodItem from "./FoodItem";
 
 const theme = {
   global: {
@@ -41,7 +44,7 @@ export default () => {
             background="light-5"
             width="large"
             pad={{ horizontal: "xlarge", vertical: "medium" }}
-            height="medium"
+            height="large"
           >
             <Form
               value={value}
@@ -54,10 +57,10 @@ export default () => {
               onSubmit={({ value }) => {
                 getFoodData(value, setItems, setShowItems);
               }}
+
             >
-              <FormField name="name" htmlFor="text-input-id" label="Food Name">
-                <TextInput id="text-input-id" name="name" />
-              </FormField>
+              <FormField name="name" htmlfor="text-input-id" label="food name"/>
+
               <Box direction="row" gap="medium">
                 <Button type="submit" primary label="Submit" />
                 <Button type="reset" label="Reset" />
@@ -65,19 +68,11 @@ export default () => {
             </Form>
             {/* RESULTS  */}
             {showItems && (
-              <div>
-                {items.map((item, i) => {
-                  console.log("mounted");
-                  return (
-                    <div key={i}>
-                      <Box height="xxsmall" width="xxsmall">
-                        <Image fit="cover" src={item.food.image} />
-                      </Box>
-                      <p>{item.food.label}</p>
-                    </div>
-                  );
-                })}
-              </div>
+              <Box overflow="auto" >
+                <InfiniteScroll pad="medium" step="1" items={items}>
+                  {(item, i) => <FoodItem key={i} item={item} />}
+                </InfiniteScroll>
+              </Box>
             )}
           </Box>
         </Tab>
