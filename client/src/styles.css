@@ -25,6 +25,10 @@ p {
   margin: 0;
 }
 
+.contnet {
+  height: 100%;
+}
+
 .footer {
   text-align: center;
   padding: 2px;

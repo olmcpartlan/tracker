@@ -62,14 +62,14 @@ export default () => {
               <FormField name="name" htmlfor="text-input-id" label="food name"/>
 
               <Box direction="row" gap="medium">
-                <Button type="submit" primary label="Submit" />
+                <Button type="submit" primary label="Submit" name="submit" />
                 <Button type="reset" label="Reset" />
               </Box>
             </Form>
             {/* RESULTS  */}
             {showItems && (
               <Box overflow="auto" >
-                <InfiniteScroll pad="medium" step="1" items={items}>
+                <InfiniteScroll pad="medium" step={1} items={items}>
                   {(item, i) => <FoodItem key={i} item={item} />}
                 </InfiniteScroll>
               </Box>
