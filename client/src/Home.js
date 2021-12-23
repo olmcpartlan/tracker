@@ -61,7 +61,7 @@ export default () => {
             >
               <FormField name="name" htmlfor="text-input-id" label="food name"/>
 
-              <Box direction="row" gap="medium">
+              <Box direction="row" gap="medium" >
                 <Button type="submit" primary label="Submit" name="submit" />
                 <Button type="reset" label="Reset" />
               </Box>

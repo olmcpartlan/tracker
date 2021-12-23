@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Image, Table, TableBody, TableRow, TableCell } from "grommet";
+import { Box, Grid, Image, Table, TableBody, TableRow, TableCell, Button } from "grommet";
 import { List } from "grommet/components/List";
 import "./styles.css";
 import FoodInfo from "./FoodInfo";
@@ -55,8 +55,8 @@ export default (item) => {
     <div>
       {/* Create the grid for showing food image and properties. */}
       <Grid
-        rows={["small", "xsmall", "xsmall"]}
-        columns={["xsmall", "flex"]}
+        rows={["small", "flex", "xsmall"]}
+        columns={["xsmall", "medium"]}
         gap="medium"
         areas={[
           { name: "image", start: [0, 0], end: [0, 0] },
@@ -69,25 +69,29 @@ export default (item) => {
             {hasImage ? <Image fill src={item.food.image} />
               : <Clear size="xlarge"/>
             }
-
+            <p>{item.food.brand}</p>
+            <Box className="footer-container">
+            </Box>
           </Box>
-          <Box gridArea="footer" background="light-1">
-            <FoodInfo foodData={item.food} />
+          <Box gridArea="footer" >
           </Box>
         </div>
         <Box gridArea="content" background="brand">
           <Table>
             <TableBody>
               <TableRow className="brand-cell" >
-                <TableCell size="xlarge" align="center">
-                  <h5>{item.food.brand}</h5>
+                <TableCell size="medium" align="center">
+                  <h5>{item.food.label}</h5>
+                </TableCell>
+                <TableCell>
+                  <Button style={{padding: '10px'}} primary>add</Button>
                 </TableCell>
               </TableRow>
               {/* Map the nutrient values for the rendered food. */}
               {Object.entries(item.food.nutrients).map((nutrient, i) => {
                 // A significant amount of nutrients will come back null.
                 // Only showing properties that have a value for nutrients.
-                if (nutrient[1] !== null) return <TableRow key={i}>
+                if(nutrient[1] !== null) return <TableRow key={i}>
                   <TableCell scope="row">
                     <strong>{cleanNutrientLabel(nutrient[0])}</strong>
                   </TableCell>
@@ -106,7 +110,12 @@ export default (item) => {
 
                     {item.food.servingSizes.map((size, i) => {
                       return <TableRow >
-                        <TableCell scope="col" align='right'>{Number.parseFloat(size.quantity).toFixed(3)}</TableCell>
+                        <TableCell 
+                          scope="col" 
+                          align='right'
+                        >
+                          {Number.parseFloat(size.quantity).toFixed(3)}
+                        </TableCell>
                         <TableCell scope="col" >{size.label}   </TableCell>
                       </TableRow>
                     })}

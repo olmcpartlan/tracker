@@ -4,6 +4,13 @@
 	width: 100%;
 }
 
+.footer-container {
+  margin: 5px;
+}
+
+.btn-add-food {
+  margin: 2px;
+}
 
 .image {
   width: 250px;

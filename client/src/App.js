@@ -1,33 +1,71 @@
 import React from 'react';
-import { Grommet, Box, Grid } from 'grommet';
+import { useState } from 'react';
 import Home from './Home';
+import { BarChart } from "grommet-icons";
+import { Grommet, Box, Button, Grid, Text } from 'grommet';
+import { grommet } from 'grommet/themes';
 
-const theme = {
-  global: {
-    font: {
-      family: 'Roboto',
-      size: '18px',
-      height: '20px',
-    },
-  },
-};
 
-export default () => (
-  <Grommet theme={theme} >
-    <Grid
-      rows={['xsmall', 'large']}
-      justifyContent={"center"}
-      columns={['small', 'xlarge']}
-      gap="medium"
-      areas={[
-        { name: 'header', start: [0, 0], end: [1, 0] },
-        { name: 'nav', start: [0, 1], end: [0, 1] },
-        { name: 'main', start: [1, 1], end: [1, 1] },
-      ]}
-    >
-      <Box gridArea="header" background="brand" />
-      <Box gridArea="nav" background="light-5" />
-      <Home />
-    </Grid>
+
+export default () => {
+
+  const [sidebar, setSidebar] = useState(true);
+
+
+  return <Grommet full theme={grommet}>
+    {Grid.available ? (
+      <Grid
+        fill
+        rows={['auto', 'flex']}
+        columns={['auto', 'flex']}
+        areas={[
+          { name: 'header', start: [0, 0], end: [1, 0] },
+          { name: 'sidebar', start: [0, 1], end: [0, 1] },
+          { name: 'main', start: [1, 1], end: [1, 1] },
+        ]}
+      >
+        <Box
+          gridArea="header"
+          direction="row"
+          align="center"
+          justify="between"
+          pad={{ horizontal: 'medium', vertical: 'small' }}
+          background="dark-2"
+        >
+          <Button onClick={() => setSidebar(!sidebar)}>
+            <Text size="large">Title</Text>
+          </Button>
+          <Text>my@email</Text>
+        </Box>
+        {sidebar && (
+          <Box
+            gridArea="sidebar"
+            background="dark-3"
+            width="small"
+            animation={[
+              { type: 'fadeIn', duration: 300 },
+              { type: 'slideRight', size: 'xlarge', duration: 150 },
+            ]}
+          >
+            {['First', 'Second', 'Third'].map((name) => (
+              <Button key={name} href="#" hoverIndicator>
+                <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
+                  <Text>{name}</Text>
+                </Box>
+              </Button>
+            ))}
+          </Box>
+        )}
+        <Box gridArea="main" justify="center" align="center">
+          <Home />
+        </Box>
+      </Grid>
+    ) : (
+      <Text>Grid is not supported by your browser</Text>
+    )}
   </Grommet>
-);
+
+}
+
+
+
