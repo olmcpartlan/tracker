@@ -76,12 +76,12 @@ export default (item) => {
           <Box gridArea="footer" >
           </Box>
         </div>
-        <Box gridArea="content" background="brand">
+        <Box gridArea="content" background={{ dark: 'dark-2', light: 'light-2' }}>
           <Table>
             <TableBody>
               <TableRow className="brand-cell" >
                 <TableCell size="medium" align="center">
-                  <h5>{item.food.label}</h5>
+                  <h3>{item.food.label}</h3>
                 </TableCell>
                 <TableCell>
                   <Button style={{padding: '10px'}} primary>add</Button>

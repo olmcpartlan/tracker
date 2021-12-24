@@ -17,10 +17,6 @@
   float: left;
   margin: 20px;
 }
-nutrition-label {
-  font-size: small;
-  line-height: 1.4;
-}
 
 
 .image {
@@ -28,6 +24,7 @@ nutrition-label {
   float: left;
   margin: 20px;
 }
+
 p {
   margin: 0;
 }

@@ -15,21 +15,16 @@ import {
 import { render } from "@testing-library/react";
 import FoodItem from "./FoodItem";
 
-const theme = {
-  global: {
-    backgroundColor: "blue",
-  },
-};
-
 const getFoodData = (foodInput, setItems, showItems) => {
   fetch(`api/food?searchvalue=${foodInput.name}`)
-    .then((res) => res.json())
-    .then((res) => {
+    .then(res => res.json())
+    .then(res => {
       console.log(res);
       setItems(res.hints);
       showItems(true);
     });
 };
+
 
 export default () => {
   const [value, setValue] = useState({});
@@ -37,11 +32,11 @@ export default () => {
   const [showItems, setShowItems] = useState(false);
 
   return (
-    <Box gridArea="main" background="light-2" align="center">
+    <Box gridArea="main" align="center">
       <Tabs>
         <Tab title="Search Food">
           <Box
-            background="light-5"
+            background={{dark: 'dark-2', light: 'light-5'}}
             width="large"
             pad={{ horizontal: "xlarge", vertical: "medium" }}
             height="large"
@@ -49,7 +44,7 @@ export default () => {
             <Form
               value={value}
               onChange={(nextValue) => setValue(nextValue)}
-              onReset={() => {
+              onReset={(e) => {
                 setValue();
                 setShowItems(false);
                 setItems([]);
@@ -61,7 +56,7 @@ export default () => {
             >
               <FormField name="name" htmlfor="text-input-id" label="food name"/>
 
-              <Box direction="row" gap="medium" >
+              <Box direction="row" gap="medium" pad={{bottom: 'medium'}}>
                 <Button type="submit" primary label="Submit" name="submit" />
                 <Button type="reset" label="Reset" />
               </Box>
@@ -69,8 +64,9 @@ export default () => {
             {/* RESULTS  */}
             {showItems && (
               <Box overflow="auto" >
+
                 <InfiniteScroll pad="medium" step={1} items={items}>
-                  {(item, i) => <FoodItem key={i} item={item} />}
+                  {(item, i) =>  <FoodItem key={i} item={item} />}
                 </InfiniteScroll>
               </Box>
             )}

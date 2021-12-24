@@ -1,18 +1,36 @@
 import React from 'react';
 import { useState } from 'react';
 import Home from './Home';
-import { BarChart } from "grommet-icons";
+import { theme } from './Theme'
+import { BarChart, Moon, Sun, UserAdd } from "grommet-icons";
 import { Grommet, Box, Button, Grid, Text } from 'grommet';
-import { grommet } from 'grommet/themes';
 
 
+const showLogIn = (e) => {
+  // TODO: logic to validate and communicate with db.
+  console.log('something');
 
-export default () => {
+}
 
+const setSessionColor = (value, defaultValue) => {
+  const stored = sessionStorage.getItem('colorTheme');
+  // The application starts in light mode by default. 
+  // session storage won't be available.
+  if (!stored) {
+    return defaultValue;
+  }
+
+}
+
+export default (props) => {
   const [sidebar, setSidebar] = useState(true);
+  const [loggedin, setLoggedIn] = useState(true);
+  const [lightMode, setLightMode] = useState(
+    setSessionColor(true)
+  );
 
 
-  return <Grommet full theme={grommet}>
+  return <Grommet full theme={theme} background={lightMode ? 'light-3' : 'dark-1'} >
     {Grid.available ? (
       <Grid
         fill
@@ -30,12 +48,13 @@ export default () => {
           align="center"
           justify="between"
           pad={{ horizontal: 'medium', vertical: 'small' }}
-          background="dark-2"
+          background='brand'
         >
           <Button onClick={() => setSidebar(!sidebar)}>
             <Text size="large">Title</Text>
           </Button>
-          <Text>my@email</Text>
+          {lightMode ? <Sun onClick={() => setLightMode(false)} /> : <Moon onClick={() => setLightMode(true)} />}
+          <UserAdd size='medium' onClick={(e) => showLogIn(e)} />
         </Box>
         {sidebar && (
           <Box

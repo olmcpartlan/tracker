@@ -1,6 +1,7 @@
 package org.eoghancorp.tracker.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eoghancorp.tracker.Models.DbController;
 import org.eoghancorp.tracker.Models.FoodResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,21 @@ public class FoodController {
         FoodResponse apiResponse = GetFoodResponse(searchvalue);
 
         return apiResponse;
+    }
+
+    @GetMapping("/db")
+    public String getSomething() {
+        try
+        {
+            new DbController().getUser();
+
+
+            return "message";
+
+        }
+        catch(Exception e) {
+            return e.getMessage();
+        }
     }
 
     static FoodResponse GetFoodResponse(String searchCriteria) {
