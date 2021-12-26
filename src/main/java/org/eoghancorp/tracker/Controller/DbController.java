@@ -1,4 +1,4 @@
-package org.eoghancorp.tracker.Models;
+package org.eoghancorp.tracker.Controller;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,11 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
+import java.util.UUID;
 
 
 public class DbController {
-    private String connectinString = "server=127.0.0.1;uid=Mysql;pwd=naltrapcm;database=tracker";
+    private String connectinString = "jdbc:mysql://address=(host=localhost)(port=3306)(user=root)(password=naltrapcm)";
     private Connection connect = null;
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
@@ -18,27 +18,26 @@ public class DbController {
 
     public DbController() throws SQLException{
         connect = DriverManager
-                .getConnection("jdbc:mysql://localhost/feedback?"
-                        + "user=sqluser&password=sqluserpw");
+                .getConnection(connectinString);
 
         // Statements allow to issue SQL queries to the database
         statement = connect.createStatement();
 
     }
 
-    public void getUser() throws Exception {
+
+    public void getUser(UUID userId) {
         try {
             // This will load the MySQL driver, each DB has its own driver
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             // Setup the connection with the DB
             // Result set get the result of the SQL query
             resultSet = statement
-                    .executeQuery("select * from feedback.comments");
+                    .executeQuery("select * from tracker.users where userId=''");
             writeResultSet(resultSet);
 
-
         } catch (Exception e) {
-            throw e;
+            System.out.println(e.getMessage());
         } finally {
             close();
         }
@@ -52,10 +51,10 @@ public class DbController {
             // also possible to get the columns via the column number
             // which starts at 1
             // e.g. resultSet.getSTring(2);
-            String userId = resultSet.getString("userId");
-            System.out.println("***************");
-            System.out.println("User: " + userId);
-            System.out.println("***************");
+            String userName = resultSet.getString("userName");
+            System.out.println("***************\n\n\n\n");
+            System.out.println("User: " + userName);
+            System.out.println("\n\n\n\n***************");
         }
     }
 
