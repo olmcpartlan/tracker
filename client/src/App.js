@@ -1,14 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
+import Modal from 'react-modal';
 import Home from './Home';
 import { theme } from './Theme'
 import { BarChart, Moon, Sun, UserAdd } from "grommet-icons";
-import { Grommet, Box, Button, Grid, Text } from 'grommet';
+import { Grommet, Box, Button, Grid, Text, Form, TextInput } from 'grommet';
 
 
-const showLogIn = (e) => {
+const showLogIn = (e, setOverlay) => {
   // TODO: logic to validate and communicate with db.
-  console.log('something');
+  setOverlay(true);
 
 }
 
@@ -22,12 +23,34 @@ const setSessionColor = (value, defaultValue) => {
 
 }
 
+const afterOpenModal = () => {
+
+}
+const closeModal = (setOverlay) => {
+  setOverlay(false);
+}
+
+
+const overlayStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    transform: 'translate(-50%, -50%)',
+    outerHeight: '100%'
+  },
+};
+
 export default (props) => {
   const [sidebar, setSidebar] = useState(true);
   const [loggedin, setLoggedIn] = useState(true);
   const [lightMode, setLightMode] = useState(
     setSessionColor(true)
   );
+
+
+  const [showOverlay, setOverlay] = useState(false);;
 
 
   return <Grommet full theme={theme} background={lightMode ? 'light-3' : 'dark-1'} >
@@ -54,7 +77,7 @@ export default (props) => {
             <Text size="large">Title</Text>
           </Button>
           {lightMode ? <Sun onClick={() => setLightMode(false)} /> : <Moon onClick={() => setLightMode(true)} />}
-          <UserAdd size='medium' onClick={(e) => showLogIn(e)} />
+          <UserAdd size='medium' onClick={(e) => showLogIn(e, setOverlay)} />
         </Box>
         {sidebar && (
           <Box
@@ -76,6 +99,24 @@ export default (props) => {
           </Box>
         )}
         <Box gridArea="main" justify="center" align="center">
+          <Modal
+            isOpen={showOverlay}
+            onAfterOpen={afterOpenModal}
+            onRequestClose={() => closeModal(setOverlay)}
+            style={overlayStyles}
+            contentLabel="Example Modal"
+          >
+            <Grid>
+              <Form>
+                <TextInput placeholder="text" />
+                <TextInput placeholder="text" />
+                <Button primary fill style={{ textAlign: "center" }}>HI!</Button>
+              </Form>
+            </Grid>
+
+
+          </Modal>
+
           <Home />
         </Box>
       </Grid>
