@@ -33,12 +33,15 @@ const closeModal = (setOverlay) => {
 
 const overlayStyles = {
   content: {
-    top: '50%',
-    left: '50%',
+    top: '25%',
+    left: '25%',
+    width: '50%',
+    // background: { dark: 'dark-5', light: 'light-2' },
+    height: '50%',
     right: 'auto',
     bottom: 'auto',
-    transform: 'translate(-50%, -50%)',
-    outerHeight: '100%'
+    // transform: 'translate(-50%, -50%)',
+    // outerHeight: '100%'
   },
 };
 
@@ -50,7 +53,7 @@ export default (props) => {
   );
 
 
-  const [showOverlay, setOverlay] = useState(false);;
+  const [showOverlay, setOverlay] = useState(true);
 
 
   return <Grommet full theme={theme} background={lightMode ? 'light-3' : 'dark-1'} >
@@ -106,14 +109,36 @@ export default (props) => {
             style={overlayStyles}
             contentLabel="Example Modal"
           >
-            <Grid>
+
+
+            <Grid
+              gap={{row: 'medium'}}
+              rows={['auto', 'small']}
+              columns={['fill']}
+              areas={[
+                { name: 'input', start: [0, 0], end: [1, 0] },
+                { name: 'button', start: [1, 1], end: [0, 1] },
+              ]}
+
+            >
               <Form>
-                <TextInput placeholder="text" />
-                <TextInput placeholder="text" />
-                <Button primary fill style={{ textAlign: "center" }}>HI!</Button>
+                <Box height={"small"} gridArea="input" >
+                  <TextInput placeholder="text" />
+                  <TextInput placeholder="text" />
+
+                </Box>
+                <Box height="xxsmall" gridArea="button">
+                  <Button
+                    fill
+                    primary
+                    style={{ textAlign: "center" }}
+                  >
+                    hi!
+                  </Button>
+
+                </Box>
               </Form>
             </Grid>
-
 
           </Modal>
 

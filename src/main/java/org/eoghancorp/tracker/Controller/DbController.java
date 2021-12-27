@@ -1,11 +1,14 @@
 package org.eoghancorp.tracker.Controller;
 
+import org.eoghancorp.tracker.Models.User;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -26,25 +29,63 @@ public class DbController {
     }
 
 
-    public void getUser(UUID userId) {
+    public User getUser(String userId) {
         try {
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Setup the connection with the DB
             // Result set get the result of the SQL query
+
+
+            String sqlString = String.format("select * from tracker.users where userId='%s'", userId);
+
             resultSet = statement
-                    .executeQuery("select * from tracker.users where userId=''");
-            writeResultSet(resultSet);
+                    .executeQuery(sqlString);
+            // writeResultSet(resultSet);
+
+
+            while(resultSet.next()) {
+                // Get user information.
+                UUID UserId = UUID.fromString(resultSet.getString("userId"));
+                String UserName = resultSet.getString("userName");
+                String Email = resultSet.getString("email");
+                String Pass = resultSet.getString("pass");
+                Date CreatedAt = resultSet.getDate("createdAt");
+
+                return new User(UserId, UserName, Email, Pass, CreatedAt);
+
+            }
+
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("** ERROR: " + e.getMessage());
         } finally {
             close();
         }
 
+        return new User();
+    }
+
+    public boolean createUser(User newUser) throws SQLException, ClassNotFoundException {
+        // This will load the MySQL driver, each DB has its own driver
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+
+        return statement.execute(String.format(
+                "INSERT INTO users(userId, userName, email, pass, createdAt) VALUES(%s, %s, %s, %s, %s)",
+                newUser.getUserId().toString(),
+                newUser.getUserName(),
+                newUser.getEmail(),
+                newUser.getPassword(),
+                newUser.getCreatedAt().toString())
+        );
+
+
     }
 
     private void writeResultSet(ResultSet resultSet) throws SQLException {
+
+
         // ResultSet is initially before the first data set
         while (resultSet.next()) {
             // It is possible to get the columns via name

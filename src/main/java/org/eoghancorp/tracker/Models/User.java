@@ -26,4 +26,13 @@ public class User {
 
     }
 
+    public User(UUID userId, String username, String useremail, String password, Date createdAt) {
+        this.userId = userId;
+        this.userName = username;
+        this.email = useremail;
+        this.password = password;
+        this.createdAt = createdAt;
+
+    }
+
 }
