@@ -64,7 +64,6 @@ export default () => {
             {/* RESULTS  */}
             {showItems && (
               <Box overflow="auto" >
-
                 <InfiniteScroll pad="medium" step={1} items={items}>
                   {(item, i) =>  <FoodItem key={i} item={item} />}
                 </InfiniteScroll>

@@ -17,10 +17,10 @@ public class User {
 
     public User() { }
 
-    public User(String username, String useremail, String password) {
+    public User(String userName, String userEmail, String password) {
         this.userId = UUID.randomUUID();
-        this.userName = username;
-        this.email = useremail;
+        this.userName = userName;
+        this.email = userEmail;
         this.password = password;
         this.createdAt = new Date();
 

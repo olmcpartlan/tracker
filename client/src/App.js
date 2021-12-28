@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import Home from './Home';
 import { theme } from './Theme'
 import { BarChart, Moon, Sun, UserAdd } from "grommet-icons";
-import { Grommet, Box, Button, Grid, Text, Form, TextInput } from 'grommet';
+import { Grommet, Box, Button, Grid, Text, Form, TextInput, DateInput } from 'grommet';
 
 
 const showLogIn = (e, setOverlay) => {
@@ -30,6 +30,23 @@ const closeModal = (setOverlay) => {
   setOverlay(false);
 }
 
+const createUser = (user) => {
+  console.log(user);
+     
+  fetch("/users/create", {
+    "method": "POST",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": JSON.stringify(user)
+
+  })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+    });
+}
+
 
 const overlayStyles = {
   content: {
@@ -40,6 +57,7 @@ const overlayStyles = {
     height: '50%',
     right: 'auto',
     bottom: 'auto',
+    fontFamily: 'helvetica'
     // transform: 'translate(-50%, -50%)',
     // outerHeight: '100%'
   },
@@ -121,16 +139,20 @@ export default (props) => {
               ]}
 
             >
-              <Form>
-                <Box height={"small"} gridArea="input" >
-                  <TextInput placeholder="text" />
-                  <TextInput placeholder="text" />
+              <Form onSubmit={({value}) =>  {
+                createUser(value);
 
+              }}>
+                <Box height={"small"} gridArea="input">
+                  <TextInput name="userName" type="text" placeholder="UserName" />
+                  <TextInput name="email" type="email" placeholder="Email" />
+                  <TextInput name="pass" type="password" placeholder="Password" />
                 </Box>
                 <Box height="xxsmall" gridArea="button">
                   <Button
                     fill
                     primary
+                    type="submit"
                     style={{ textAlign: "center" }}
                   >
                     hi!
