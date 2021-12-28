@@ -14,6 +14,7 @@ public class User {
     private String email;
     private String password;
     private Date createdAt;
+    private Date updatedAt;
 
     public User() { }
 
@@ -23,15 +24,18 @@ public class User {
         this.email = userEmail;
         this.password = password;
         this.createdAt = new Date();
+        this.updatedAt = new Date();
 
     }
 
-    public User(UUID userId, String username, String useremail, String password, Date createdAt) {
+    public User(UUID userId, String username, String useremail, String password, Date createdAt, Date updatedAt) {
         this.userId = userId;
         this.userName = username;
         this.email = useremail;
         this.password = password;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+
 
     }
 

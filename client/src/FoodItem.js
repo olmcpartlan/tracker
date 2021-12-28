@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Image, Table, TableBody, TableRow, TableCell, Button } from "grommet";
+import { Box, Grid, Image, Table, TableBody, TableRow, TableCell, Button, Tip } from "grommet";
 import { List } from "grommet/components/List";
 import "./styles.css";
 import FoodInfo from "./FoodInfo";
-import { Clear } from "grommet-icons";
+import { CircleInformation, Clear, Info } from "grommet-icons";
 
 export default (item) => {
   item = item["item"];
 
   const [hasImage, setHasImage] = useState(false);
+  const [addFoodDisabled, setAddFoodDisabled] = useState(false);
 
   useEffect(() => {
     setHasImage(item.food.image !== null);
+    setAddFoodDisabled(window.sessionStorage.getItem("userId") === undefined);
   }, []);
+
+
+  const addFood = (foodId) => {
+    const userId = window.sessionStorage.getItem("userId");
+    fetch(`food/add?userId=${userId}&foodId=${foodId}`)
+      .then(res => res.text())
+      .then(res => {
+        console.log(res);
+      })
+  }
 
   const cleanNutrientLabel = (nutrient_label) => {
     let cleanLabel = "";
@@ -67,7 +79,7 @@ export default (item) => {
         <div>
           <Box gridArea="image" background="brand">
             {hasImage ? <Image fill src={item.food.image} />
-              : <Clear size="xlarge"/>
+              : <Clear size="xlarge" />
             }
             <p>{item.food.brand}</p>
             <Box className="footer-container">
@@ -84,14 +96,32 @@ export default (item) => {
                   <h3>{item.food.label}</h3>
                 </TableCell>
                 <TableCell>
-                  <Button style={{padding: '10px'}} primary>add</Button>
+                  {addFoodDisabled
+                    ? <Tip content="Please log in to save food data.">
+                      <CircleInformation />
+                    </Tip>
+                    : <Box>
+                      <Button
+                        style={{ padding: '10px' }}
+                        label="add"
+                        primary
+                        onClick={() => {
+                          console.log(item.food.foodId)
+                          addFood(item.food.foodId)
+                        }}
+                      />
+                    </Box>
+
+                  }
+
                 </TableCell>
+
               </TableRow>
               {/* Map the nutrient values for the rendered food. */}
               {Object.entries(item.food.nutrients).map((nutrient, i) => {
                 // A significant amount of nutrients will come back null.
                 // Only showing properties that have a value for nutrients.
-                if(nutrient[1] !== null) return <TableRow key={i}>
+                if (nutrient[1] !== null) return <TableRow key={i}>
                   <TableCell scope="row">
                     <strong>{cleanNutrientLabel(nutrient[0])}</strong>
                   </TableCell>
@@ -110,8 +140,8 @@ export default (item) => {
 
                     {item.food.servingSizes.map((size, i) => {
                       return <TableRow >
-                        <TableCell 
-                          scope="col" 
+                        <TableCell
+                          scope="col"
                           align='right'
                         >
                           {Number.parseFloat(size.quantity).toFixed(3)}

@@ -33,13 +33,16 @@ public class UserController {
     public User createUser(@RequestBody User newUser) {
         try
         {
-            boolean created =  db.createUser(newUser);
-            if(created)  {
-                return newUser;
-            }
+            User created =  db.createUser(newUser);
+
+            System.out.println("Created user: \t" + created.getUserName());
+
+            return created;
+
         }
         catch(Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("ERR: \t" + e.getMessage());
+            System.out.println("AT: \t" + e.getStackTrace());
         }
 
         // TODO: this should be an exception.

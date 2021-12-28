@@ -1,5 +1,6 @@
 package org.eoghancorp.tracker.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eoghancorp.tracker.Models.User;
 
 import java.sql.Connection;
@@ -8,12 +9,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.UUID;
 
 
 public class DbController {
-    private String connectinString = "jdbc:mysql://address=(host=localhost)(port=3306)(user=root)(password=naltrapcm)";
+    private String tosh_connectinString = "jdbc:mysql://address=(host=localhost)(port=3306)(user=root)";
+    private String book_connectinString = "jdbc:mysql://address=(host=localhost)(port=3306)(user=root)(password=naltrapcm)";
     private Connection connect = null;
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
@@ -21,10 +29,12 @@ public class DbController {
 
     public DbController() throws SQLException{
         connect = DriverManager
-                .getConnection(connectinString);
+                .getConnection(tosh_connectinString);
 
         // Statements allow to issue SQL queries to the database
         statement = connect.createStatement();
+
+        statement.execute("USE tracker;");
 
     }
 
@@ -51,14 +61,16 @@ public class DbController {
                 String Email = resultSet.getString("email");
                 String Pass = resultSet.getString("pass");
                 Date CreatedAt = resultSet.getDate("createdAt");
+                Date UpdatedAt = resultSet.getDate("updatedAt");
 
-                return new User(UserId, UserName, Email, Pass, CreatedAt);
+                return new User(UserId, UserName, Email, Pass, CreatedAt, UpdatedAt);
 
             }
 
 
         } catch (Exception e) {
-            System.out.println("** ERROR: " + e.getMessage());
+            System.out.println("** ERROR: \t" + e.getMessage());
+            System.out.println("** AT:  \t" + e.getStackTrace());
         } finally {
             close();
         }
@@ -66,19 +78,69 @@ public class DbController {
         return new User();
     }
 
-    public boolean createUser(User newUser) throws SQLException, ClassNotFoundException {
+    public User createUser(User newUser) throws SQLException, ClassNotFoundException, ParseException {
         // This will load the MySQL driver, each DB has its own driver
         Class.forName("com.mysql.cj.jdbc.Driver");
+        UUID id = UUID.randomUUID();
+
+        // DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+        LocalDateTime localDate = LocalDateTime.now();
+
+        System.out.println(id);
+
+        Date currentDateTime = Date.from(localDate.toInstant(ZoneOffset.UTC));
 
 
-        return statement.execute(String.format(
-                "INSERT INTO users(userId, userName, email, pass, createdAt) VALUES(%s, %s, %s, %s, %s)",
-                newUser.getUserId().toString(),
+        String insertStatement = String.format(
+                "INSERT INTO `tracker`.`users` (`user_id`, `user_name`, `user_email`, `user_pass`, `created_at`, `updated_at`)" +
+                "VALUES('%s','%s','%s','%s','%s', '%s')",
+                id,
                 newUser.getUserName(),
                 newUser.getEmail(),
                 newUser.getPassword(),
-                newUser.getCreatedAt().toString())
+                localDate,
+                localDate
         );
+
+        System.out.println(insertStatement);
+        newUser.setUserId(id);
+        newUser.setCreatedAt(currentDateTime);
+        newUser.setUpdatedAt(currentDateTime);
+
+
+        boolean errorCode = statement.execute(insertStatement);
+
+
+        if(!errorCode) {
+            return new User(id, newUser.getUserName(), newUser.getEmail(), newUser.getPassword(), currentDateTime, currentDateTime);
+        }
+
+        return new User("user not created because of a problem.", "", "");
+
+    }
+
+
+    /*
+    INSERT INTO `tracker`.`FoodData` VALUES (<{relationId: }>, <{foodId: }>, <{userId: }>, <{quantity: }>, <{createdAt: }>, <{updatedAt: }>);
+    */
+
+
+    public boolean addFoodToUser(String userId, String foodId) throws SQLException{
+        LocalDateTime localDate = LocalDateTime.now();
+
+        String insertStatement = String.format( "INSERT INTO FoodData VALUES('%s','%s','%s','%s','%s','%s')",
+                UUID.randomUUID(),
+                foodId,
+                userId,
+                1,  // Quantity (not using right now)
+                localDate,
+                localDate
+
+        );
+
+        return statement.execute(insertStatement);
+
 
 
     }

@@ -16,7 +16,7 @@ import { render } from "@testing-library/react";
 import FoodItem from "./FoodItem";
 
 const getFoodData = (foodInput, setItems, showItems) => {
-  fetch(`api/food?searchvalue=${foodInput.name}`)
+  fetch(`/food?searchvalue=${foodInput.name}`)
     .then(res => res.json())
     .then(res => {
       console.log(res);

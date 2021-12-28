@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Modal from 'react-modal';
 import Home from './Home';
 import { theme } from './Theme'
-import { BarChart, Moon, Sun, UserAdd } from "grommet-icons";
-import { Grommet, Box, Button, Grid, Text, Form, TextInput, DateInput } from 'grommet';
+import { BarChart, Moon, Sun, User, UserAdd } from "grommet-icons";
+import { Grommet, Box, Button, Grid, Text, Form, TextInput, DateInput, Tip, Menu } from 'grommet';
 
 
 const showLogIn = (e, setOverlay) => {
   // TODO: logic to validate and communicate with db.
   setOverlay(true);
-
 }
 
 const setSessionColor = (value, defaultValue) => {
@@ -30,7 +29,7 @@ const closeModal = (setOverlay) => {
   setOverlay(false);
 }
 
-const createUser = (user) => {
+const createUser = (user, setUserLoggedIn) => {
   console.log(user);
      
   fetch("/users/create", {
@@ -43,7 +42,8 @@ const createUser = (user) => {
   })
     .then(res => res.json())
     .then(res => {
-      console.log(res);
+      setUserLoggedIn(true);
+      window.sessionStorage.setItem("userId", res.userId);
     });
 }
 
@@ -63,15 +63,33 @@ const overlayStyles = {
   },
 };
 
+
 export default (props) => {
   const [sidebar, setSidebar] = useState(true);
-  const [loggedin, setLoggedIn] = useState(true);
+  const [loggedin, setLoggedIn] = useState((userId) => {
+    window.sessionStorage.setItem("userId", userId);
+  });
   const [lightMode, setLightMode] = useState(
     setSessionColor(true)
   );
 
 
-  const [showOverlay, setOverlay] = useState(true);
+  const [showOverlay, setOverlay] = useState(false);
+
+  useEffect(() => {
+    const sessionId = window.sessionStorage.getItem("userId");
+
+    console.log(`SESSION ID: ${sessionId}`);
+
+    if(sessionId === 'undefined') {
+      console.log('setting logged out.');
+      setLoggedIn(false);
+    }
+    else setLoggedIn(true);
+  }, [])
+
+
+
 
 
   return <Grommet full theme={theme} background={lightMode ? 'light-3' : 'dark-1'} >
@@ -97,8 +115,21 @@ export default (props) => {
           <Button onClick={() => setSidebar(!sidebar)}>
             <Text size="large">Title</Text>
           </Button>
-          {lightMode ? <Sun onClick={() => setLightMode(false)} /> : <Moon onClick={() => setLightMode(true)} />}
-          <UserAdd size='medium' onClick={(e) => showLogIn(e, setOverlay)} />
+          {lightMode
+            ? <Sun onClick={() => setLightMode(false)} />
+            : <Moon onClick={() => setLightMode(true)} />
+          }
+          {loggedin
+            ? <Menu
+              items={[
+                { label: "profile", onClick: () => { } },
+                { label: "nutrition data", onClick: () => { } }
+              ]}
+            >
+              <User />
+            </Menu>
+            : <UserAdd size='medium' onClick={(e) => showLogIn(e, setOverlay)} />
+          }
         </Box>
         {sidebar && (
           <Box
@@ -128,22 +159,21 @@ export default (props) => {
             contentLabel="Example Modal"
           >
 
-
             <Grid
-              gap={{row: 'medium'}}
+              gap={{ row: 'medium' }}
               rows={['auto', 'small']}
               columns={['fill']}
               areas={[
                 { name: 'input', start: [0, 0], end: [1, 0] },
                 { name: 'button', start: [1, 1], end: [0, 1] },
               ]}
-
             >
-              <Form onSubmit={({value}) =>  {
-                createUser(value);
 
+              <Form onSubmit={({ value }) => {
+                createUser(value, setLoggedIn)
+                closeModal(setOverlay)
               }}>
-                <Box height={"small"} gridArea="input">
+                <Box height={"small"} gridArea="input" >
                   <TextInput name="userName" type="text" placeholder="UserName" />
                   <TextInput name="email" type="email" placeholder="Email" />
                   <TextInput name="pass" type="password" placeholder="Password" />
@@ -154,6 +184,12 @@ export default (props) => {
                     primary
                     type="submit"
                     style={{ textAlign: "center" }}
+                    onSubmit={(value) => {
+                      // TODO: VALIDATE!!!!!!!!!!!!!!!
+                      createUser(value);
+
+
+                    }}
                   >
                     hi!
                   </Button>

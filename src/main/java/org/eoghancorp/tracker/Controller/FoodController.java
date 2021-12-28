@@ -1,20 +1,52 @@
 package org.eoghancorp.tracker.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eoghancorp.tracker.Controller.DbController;
 import org.eoghancorp.tracker.Models.FoodResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.SQLException;
+
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/food")
 public class FoodController {
-    @GetMapping("/food")
+    private static DbController db;
+
+    public FoodController() {
+        try {
+            db = new DbController();
+
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @GetMapping("")
     public FoodResponse getFoods(@RequestParam String searchvalue) {
         FoodResponse apiResponse = GetFoodResponse(searchvalue);
 
         return apiResponse;
+    }
+
+
+    @GetMapping("/add")
+    public boolean addFood(@RequestParam String userId, @RequestParam String foodId) {
+
+        System.out.println("USERID: \t" + userId);
+        System.out.println("FOODID: \t" + foodId);
+
+        try {
+            return db.addFoodToUser(userId, foodId);
+        }
+        catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
     }
 
 
@@ -44,6 +76,7 @@ public class FoodController {
         return null;
 
     }
+
 
 
 }
