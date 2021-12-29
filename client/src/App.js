@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import Modal from 'react-modal';
 import Home from './Home';
 import { theme } from './Theme'
 import { BarChart, Moon, Sun, User, UserAdd } from "grommet-icons";
 import { Grommet, Box, Button, Grid, Text, Form, TextInput, DateInput, Tip, Menu } from 'grommet';
+import UserDashboard from './UserDashboard';
 
 
 const showLogIn = (e, setOverlay) => {
@@ -31,7 +33,7 @@ const closeModal = (setOverlay) => {
 
 const createUser = (user, setUserLoggedIn) => {
   console.log(user);
-     
+
   fetch("/users/create", {
     "method": "POST",
     "headers": {
@@ -64,7 +66,7 @@ const overlayStyles = {
 };
 
 
-export default (props) => {
+const App = (props) => {
   const [sidebar, setSidebar] = useState(true);
   const [loggedin, setLoggedIn] = useState((userId) => {
     window.sessionStorage.setItem("userId", userId);
@@ -81,7 +83,7 @@ export default (props) => {
 
     console.log(`SESSION ID: ${sessionId}`);
 
-    if(sessionId === 'undefined') {
+    if (sessionId === 'undefined') {
       console.log('setting logged out.');
       setLoggedIn(false);
     }
@@ -89,7 +91,7 @@ export default (props) => {
   }, [])
 
 
-
+  const navigate = useNavigate();
 
 
   return <Grommet full theme={theme} background={lightMode ? 'light-3' : 'dark-1'} >
@@ -122,7 +124,7 @@ export default (props) => {
           {loggedin
             ? <Menu
               items={[
-                { label: "profile", onClick: () => { } },
+                { label: "profile", onClick: () => { navigate("/dashboard") } },
                 { label: "nutrition data", onClick: () => { } }
               ]}
             >
@@ -207,6 +209,21 @@ export default (props) => {
       <Text>Grid is not supported by your browser</Text>
     )}
   </Grommet>
+
+
+}
+
+export default (props) => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/dashboard" exact element={<UserDashboard/>} />
+        <Route path="/" exact element={<App/>} />
+      </Routes>
+    </Router>
+  )
+
+
 
 }
 

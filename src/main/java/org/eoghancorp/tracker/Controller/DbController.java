@@ -15,7 +15,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -144,6 +146,24 @@ public class DbController {
 
 
     }
+
+    // Returns the user's food ids.
+    public String[] getUserFood(String userId) throws SQLException {
+        String query = String.format("SELECT foodId FROM FoodData WHERE userId = '%s'", userId);
+        resultSet = statement.executeQuery(query);
+
+        List<String> ids = new ArrayList<String>();
+
+        while(resultSet.next()) {
+            Object foodId = resultSet.getObject(0);
+            System.out.println();
+            // ids.add(foodId);
+        }
+
+        return (String[])ids.toArray();
+
+    }
+
 
     private void writeResultSet(ResultSet resultSet) throws SQLException {
 

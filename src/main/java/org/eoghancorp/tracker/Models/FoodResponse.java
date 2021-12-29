@@ -24,7 +24,7 @@ public class FoodResponse {
             for(Hint hint : res.hints) {
                 Nutrients nuuts = hint.getFood().getNutrients();
                 String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(nuuts);
-                System.out.println(json);
+                // System.out.println(json);
                 if(nuuts.getSUGAR() != null) {
                 }
 
