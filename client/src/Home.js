@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -26,7 +26,8 @@ const getFoodData = (foodInput, setItems, showItems) => {
 };
 
 
-export default () => {
+export default (props) => {
+
   const [value, setValue] = useState({});
   const [items, setItems] = useState([]);
   const [showItems, setShowItems] = useState(false);
@@ -36,7 +37,7 @@ export default () => {
       <Tabs>
         <Tab title="Search Food">
           <Box
-            background={{dark: 'dark-2', light: 'light-5'}}
+            background={{ dark: 'dark-2', light: 'light-5' }}
             width="large"
             pad={{ horizontal: "xlarge", vertical: "medium" }}
             height="large"
@@ -54,9 +55,9 @@ export default () => {
               }}
 
             >
-              <FormField name="name" htmlfor="text-input-id" label="food name"/>
+              <FormField name="name" htmlfor="text-input-id" label="food name" />
 
-              <Box direction="row" gap="medium" pad={{bottom: 'medium'}}>
+              <Box direction="row" gap="medium" pad={{ bottom: 'medium' }}>
                 <Button type="submit" primary label="Submit" name="submit" />
                 <Button type="reset" label="Reset" />
               </Box>
@@ -65,7 +66,7 @@ export default () => {
             {showItems && (
               <Box overflow="auto" >
                 <InfiniteScroll pad="medium" step={1} items={items}>
-                  {(item, i) =>  <FoodItem key={i} item={item} />}
+                  {(item, i) => <FoodItem key={i} item={item} userLoggedIn={props}/>}
                 </InfiniteScroll>
               </Box>
             )}

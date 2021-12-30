@@ -1,4 +1,4 @@
-import React, { useEffect, } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import Modal from 'react-modal';
@@ -24,11 +24,24 @@ const setSessionColor = (value, defaultValue) => {
 
 }
 
+
 const afterOpenModal = () => {
 
 }
 const closeModal = (setOverlay) => {
   setOverlay(false);
+}
+
+const loginUser = (user, setUserLoggedIn) => {
+  // call db to check credentials and add id to session.
+  fetch(`/users/login?userName=${user.username}&passAttempt=${user.password}`)
+    .then(res => res.json())
+    .then(res => {
+      window.sessionStorage.setItem("userId", res.userId);
+      setUserLoggedIn(true);
+      console.log(res);
+    })
+
 }
 
 const createUser = (user, setUserLoggedIn) => {
@@ -44,8 +57,8 @@ const createUser = (user, setUserLoggedIn) => {
   })
     .then(res => res.json())
     .then(res => {
-      setUserLoggedIn(true);
       window.sessionStorage.setItem("userId", res.userId);
+      setUserLoggedIn(true);
     });
 }
 
@@ -67,6 +80,7 @@ const overlayStyles = {
 
 
 const App = (props) => {
+
   const [sidebar, setSidebar] = useState(true);
   const [loggedin, setLoggedIn] = useState((userId) => {
     window.sessionStorage.setItem("userId", userId);
@@ -75,8 +89,10 @@ const App = (props) => {
     setSessionColor(true)
   );
 
-
   const [showOverlay, setOverlay] = useState(false);
+
+  const [displayLoginForm, setShowLogin] = useState(false);
+
 
   useEffect(() => {
     const sessionId = window.sessionStorage.getItem("userId");
@@ -133,6 +149,7 @@ const App = (props) => {
             : <UserAdd size='medium' onClick={(e) => showLogIn(e, setOverlay)} />
           }
         </Box>
+
         {sidebar && (
           <Box
             gridArea="sidebar"
@@ -171,14 +188,15 @@ const App = (props) => {
               ]}
             >
 
-              <Form onSubmit={({ value }) => {
+              {!displayLoginForm
+                ?  <Form onSubmit={({ value }) => {
                 createUser(value, setLoggedIn)
                 closeModal(setOverlay)
               }}>
                 <Box height={"small"} gridArea="input" >
                   <TextInput name="userName" type="text" placeholder="UserName" />
                   <TextInput name="email" type="email" placeholder="Email" />
-                  <TextInput name="pass" type="password" placeholder="Password" />
+                  <TextInput name="password" type="password" placeholder="Password" />
                 </Box>
                 <Box height="xxsmall" gridArea="button">
                   <Button
@@ -189,15 +207,46 @@ const App = (props) => {
                     onSubmit={(value) => {
                       // TODO: VALIDATE!!!!!!!!!!!!!!!
                       createUser(value);
-
-
                     }}
                   >
                     hi!
                   </Button>
+                  <Box className="span-login">
+                    <span onClick={() => setShowLogin(true)}>or login</span>
+                  </Box>
+
+
 
                 </Box>
               </Form>
+                : <Form onSubmit={({ value }) => {
+                  loginUser(value, setLoggedIn)
+                  closeModal(setOverlay)
+                }}>
+
+                  <Box height={"small"} gridArea="input" >
+                    <TextInput name="username" type="text" placeholder="username" />
+                    <TextInput name="password" type="password" placeholder="password" />
+                  </Box>
+                  <Box height="xxsmall" gridArea="button">
+                    <Button
+                      fill
+                      primary
+                      type="submit"
+                      style={{ textAlign: "center" }}
+                    >
+                      hi!
+                    </Button>
+                    <Box className="span-login">
+                      <span onClick={() => setShowLogin(!showLogIn)}>or login</span>
+                    </Box>
+
+
+
+                  </Box>
+                </Form>
+              }
+
             </Grid>
 
           </Modal>
@@ -214,11 +263,12 @@ const App = (props) => {
 }
 
 export default (props) => {
+
   return (
     <Router>
       <Routes>
-        <Route path="/dashboard" exact element={<UserDashboard/>} />
-        <Route path="/" exact element={<App/>} />
+        <Route path="/dashboard" exact element={<UserDashboard />} />
+        <Route path="/" exact element={<App />} />
       </Routes>
     </Router>
   )

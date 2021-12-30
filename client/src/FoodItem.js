@@ -5,16 +5,26 @@ import "./styles.css";
 import FoodInfo from "./FoodInfo";
 import { CircleInformation, Clear, Info } from "grommet-icons";
 
-export default (item) => {
+export default (item, userLoggedIn) => {
   item = item["item"];
 
   const [hasImage, setHasImage] = useState(false);
-  const [addFoodDisabled, setAddFoodDisabled] = useState(false);
+  const [showAddFood, setShowAddFood] = useState(false);
 
   useEffect(() => {
+    console.log(userLoggedIn);
     setHasImage(item.food.image !== null);
-    setAddFoodDisabled(window.sessionStorage.getItem("userId") === undefined);
+    showAddButton();
   }, []);
+
+
+  const showAddButton = () => {
+    const isLoggedIn = window.sessionStorage.getItem("userId") !== 'undefined';
+
+    console.log(isLoggedIn);
+    setShowAddFood(isLoggedIn);
+  }
+
 
 
   const addFood = (foodId) => {
@@ -78,7 +88,8 @@ export default (item) => {
       >
         <div>
           <Box gridArea="image" background="brand">
-            {hasImage ? <Image fill src={item.food.image} />
+            {hasImage
+              ? <Image fill src={item.food.image} />
               : <Clear size="xlarge" />
             }
             <p>{item.food.brand}</p>
@@ -96,7 +107,7 @@ export default (item) => {
                   <h3>{item.food.label}</h3>
                 </TableCell>
                 <TableCell>
-                  {addFoodDisabled
+                  {!showAddFood
                     ? <Tip content="Please log in to save food data.">
                       <CircleInformation />
                     </Tip>

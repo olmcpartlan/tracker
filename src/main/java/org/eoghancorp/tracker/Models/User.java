@@ -3,6 +3,7 @@ package org.eoghancorp.tracker.Models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.security.MessageDigest;
 import java.util.Date;
 import java.util.UUID;
 
@@ -36,7 +37,33 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
 
+    }
 
+    public static String encryptPassword(String inputPassword) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA");
+
+            byte[] bytes = inputPassword.getBytes();
+            md.reset();
+
+            byte[] digestedByes = md.digest(bytes);
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < md.digest().length; i++) {
+                if ((digestedByes[i] & 0xff) < 0x10) {
+                    sb.append("0");
+                }
+
+                sb.append(Long.toString(digestedByes[i] & 0xff, 16));
+            }
+
+            return sb.toString();
+        }
+        catch (Exception e) {
+            System.out.println("Exception thrown while encrypting. ");
+            System.out.println(e.getMessage());
+        }
+
+        return "an error occurred";
     }
 
 }

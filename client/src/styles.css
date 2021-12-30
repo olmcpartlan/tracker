@@ -46,3 +46,9 @@ p {
 .animate.grow {
   transform: scale(1.5);
 }
+
+.span-login {
+  color: blue;
+  text-align: center;
+}
+

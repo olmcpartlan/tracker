@@ -22,6 +22,40 @@ public class UserController {
         }
     }
 
+    @GetMapping("/test")
+    public String testEncrypt() {
+        String pass = "password";
+        try {
+            String userPass = User.encryptPassword("password");
+
+            System.out.println();
+
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return "";
+    }
+
+    @GetMapping("/login")
+    public User loginUser(@RequestParam String userName, @RequestParam String passAttempt) {
+        try {
+            String hashedPassAttempt = User.encryptPassword(passAttempt);
+
+            User matchedUser = db.loginUser(userName, hashedPassAttempt);
+            return matchedUser;
+
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println();
+        }
+
+        return new User("there was a problem", "", "");
+    }
+
+
+
     @GetMapping("/select")
     public User getUser(@RequestParam String userId) {
         User foundUser = db.getUser(userId);

@@ -2,13 +2,13 @@ package org.eoghancorp.tracker.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eoghancorp.tracker.Models.User;
+import org.eoghancorp.tracker.Models.UserFood;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,18 +89,17 @@ public class DbController {
 
         LocalDateTime localDate = LocalDateTime.now();
 
-        System.out.println(id);
 
         Date currentDateTime = Date.from(localDate.toInstant(ZoneOffset.UTC));
-
+        String hashedPassword = User.encryptPassword(newUser.getPassword());
 
         String insertStatement = String.format(
                 "INSERT INTO `tracker`.`users` (`user_id`, `user_name`, `user_email`, `user_pass`, `created_at`, `updated_at`)" +
-                "VALUES('%s','%s','%s','%s','%s', '%s')",
+                        "VALUES('%s','%s','%s','%s','%s', '%s')",
                 id,
                 newUser.getUserName(),
                 newUser.getEmail(),
-                newUser.getPassword(),
+                hashedPassword,
                 localDate,
                 localDate
         );
@@ -123,10 +122,65 @@ public class DbController {
     }
 
 
-    /*
-    INSERT INTO `tracker`.`FoodData` VALUES (<{relationId: }>, <{foodId: }>, <{userId: }>, <{quantity: }>, <{createdAt: }>, <{updatedAt: }>);
-    */
+    public User loginUser(String userName, String passAttempt) throws SQLException {
 
+        String query = String.format("SELECT user_name, user_email, user_pass from users WHERE user_name='%s'", userName);
+
+        resultSet = statement.executeQuery(query);
+        User foundUser = new User();
+
+        if(resultSet.next()) {
+            String foundPass = resultSet.getString("user_pass");
+
+            if(passAttempt.equals(foundPass)) {
+
+
+                foundUser = new User(
+                        resultSet.getString("user_name"),
+                        resultSet.getString("user_email"),
+                        "");
+                return foundUser;
+            }
+            else {
+                // Password attempt was incorrect.
+            }
+        }
+
+        else {
+            // Nothing matched in the db.
+            System.out.println();
+        }
+
+
+        return new User();
+    }
+
+
+    // Returns the user's food ids.
+    public List<UserFood> getUserFood(String userId) throws SQLException {
+        String query = String.format("SELECT foodId, quantity, createdAt FROM FoodData WHERE userId = '%s'", userId);
+        resultSet = statement.executeQuery(query);
+
+
+        List<UserFood> foods = new ArrayList<UserFood>();
+
+
+        while(resultSet.next()) {
+            String foodId = resultSet.getString("foodId");
+            double quantity = resultSet.getDouble("quantity");
+            Date createdAt = resultSet.getDate("createdAt");
+
+            foods.add(new UserFood(foodId, "", quantity, createdAt));
+
+            System.out.println();
+            // ids.add(foodId);
+        }
+
+
+        return foods;
+
+
+    }
 
     public boolean addFoodToUser(String userId, String foodId) throws SQLException{
         LocalDateTime localDate = LocalDateTime.now();
@@ -143,43 +197,8 @@ public class DbController {
 
         return statement.execute(insertStatement);
 
-
-
     }
 
-    // Returns the user's food ids.
-    public String[] getUserFood(String userId) throws SQLException {
-        String query = String.format("SELECT foodId FROM FoodData WHERE userId = '%s'", userId);
-        resultSet = statement.executeQuery(query);
-
-        List<String> ids = new ArrayList<String>();
-
-        while(resultSet.next()) {
-            Object foodId = resultSet.getObject(0);
-            System.out.println();
-            // ids.add(foodId);
-        }
-
-        return (String[])ids.toArray();
-
-    }
-
-
-    private void writeResultSet(ResultSet resultSet) throws SQLException {
-
-
-        // ResultSet is initially before the first data set
-        while (resultSet.next()) {
-            // It is possible to get the columns via name
-            // also possible to get the columns via the column number
-            // which starts at 1
-            // e.g. resultSet.getSTring(2);
-            String userName = resultSet.getString("userName");
-            System.out.println("***************\n\n\n\n");
-            System.out.println("User: " + userName);
-            System.out.println("\n\n\n\n***************");
-        }
-    }
 
     // You need to close the resultSet
     private void close() {
